@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  webdav:
+    build: .
+    restart: always
+    ports:
+      - '${DAV_PORT:-127.0.0.1:8000}:80'
+    environment:
+      LOCATION: /webdav
+      ANONYMOUS_METHODS: OPTIONS
+      AUTH_TYPE: Basic
+      USERNAME: ${DAV_USERNAME:-user}
+      PASSWORD: ${DAV_PASSWORD:-password}
+    volumes:
+      - ./dav:/var/lib/dav
