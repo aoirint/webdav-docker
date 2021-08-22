@@ -39,7 +39,7 @@ jobs:
         with:
           args: push aoirint/webdav:${{ github.event.release.tag_name }}
 
-  dockerhub_2.4:
+  dockerhub-2_4:
     runs-on: ubuntu-latest
 
     steps:
