@@ -1,0 +1,73 @@
+name: Deploy
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  dockerhub:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: actions-hub/docker/login@master
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_REGISTRY_URL: docker.io
+
+      - name: Build :latest
+        if: success()
+        run: docker build -t aoirint/webdav:latest ./latest
+
+      - name: Deploy :latest
+        if: success()
+        uses: actions-hub/docker@master
+        with:
+          args: push aoirint/webdav:latest
+
+      - name: Build :${{ github.event.release.tag_name }}
+        if: success()
+        run: docker build -t aoirint/webdav:${{ github.event.release.tag_name }} ./latest
+
+      - name: Deploy :${{ github.event.release.tag_name }}
+        if: success()
+        uses: actions-hub/docker@master
+        with:
+          args: push aoirint/webdav:${{ github.event.release.tag_name }}
+
+  dockerhub-2.4:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: actions-hub/docker/login@master
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_REGISTRY_URL: docker.io
+
+      - name: Build :2.4
+        if: success()
+        run: docker build -t aoirint/webdav:2.4 ./2.4
+
+      - name: Deploy :2.4
+        if: success()
+        uses: actions-hub/docker@master
+        with:
+          args: push aoirint/webdav:2.4
+
+      - name: Build :2.4-${{ github.event.release.tag_name }}
+        if: success()
+        run: docker build -t aoirint/webdav:2.4-${{ github.event.release.tag_name }} ./2.4
+
+      - name: Deploy :2.4-${{ github.event.release.tag_name }}
+        if: success()
+        uses: actions-hub/docker@master
+        with:
+          args: push aoirint/webdav:2.4-${{ github.event.release.tag_name }}
